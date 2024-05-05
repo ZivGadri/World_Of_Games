@@ -1,12 +1,29 @@
 from flask import Flask, render_template, send_from_directory, abort
 from HelperMethods import get_user_score, get_repaired_name
+import os
+import sys
 
 app = Flask(__name__)
 
-app.config["TEMPLATES_PATH/vendor/"] = "C:/Users/ziv/PycharmProjects/WorldOfGames/Utils/templates/vendor/"
-app.config["TEMPLATES_PATH/css/"] = "C:/Users/ziv/PycharmProjects/WorldOfGames/Utils/templates/css/"
-app.config["TEMPLATES_PATH/img/"] = "C:/Users/ziv/PycharmProjects/WorldOfGames/Utils/templates/img/"
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
+vendor_path = os.path.join(BASE_DIR, "templates", "vendor\\")
+css_path = os.path.join(BASE_DIR, "templates", "css\\")
+img_path = os.path.join(BASE_DIR, "templates", "img\\")
+
+# Check the operating system and adjust the paths accordingly
+if sys.platform.startswith("win"):
+    vendor_path = vendor_path.replace("\\", "/")
+    css_path = css_path.replace("\\", "/")
+    img_path = img_path.replace("\\", "/")
+
+app.config["TEMPLATES_PATH/vendor/"] = vendor_path
+app.config["TEMPLATES_PATH/css/"] = css_path
+app.config["TEMPLATES_PATH/img/"] = img_path
+
+@app.route('/')
+def index():
+    return render_template('ziv.html')
 
 @app.route('/score/<string:name>')
 def get_scores(name: str):
@@ -43,3 +60,6 @@ def send_img(file_name):
 
 print("Flask server is running and listening on port 5000")
 app.run(host="0.0.0.0", port=5000, debug=True)
+
+if __name__ == '__main__':
+    app.run(debug=True)
